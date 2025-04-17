@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neo AI Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: linear-gradient(to right, #4c1d95, #115e59); }
+    .chat-area { max-height: 80vh; overflow-y: auto; scroll-behavior: smooth; }
+    .message { opacity: 0; animation: fadeIn 0.5s ease-in forwards; }
+    .user-message { background: #7c3aed; color: white; border-radius: 0.75rem 0.75rem 0 0.75rem; }
+    .ai-message { background: #2dd4bf; color: black; border-radius: 0.75rem 0.75rem 0.75rem 0; }
+    .sidebar { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="min-h-screen flex text-white">
+  <!-- Sidebar -->
+  <div class="sidebar w-64 p-4 flex flex-col gap-4">
+    <div class="text-2xl font-bold">Neo AI</div>
+    <div class="text-center">
+      <img src="https://via.placeholder.com/100" alt="Logo" class="rounded-full mx-auto">
+      <p class="text-sm mt-2">Your AI Assistant</p>
+    </div>
+    <button id="clear-chat" class="w-full py-2 bg-red-500 rounded-lg hover:bg-red-600">Clear Chat</button>
+  </div>
+  <!-- Chat Area -->
+  <div class="flex-1 flex flex-col p-4">
+    <div id="chat-area" class="chat-area flex-1 flex flex-col gap-3 p-4 bg-black bg-opacity-20 rounded-lg">
+      <div class="text-center text-sm text-gray-300">Start chatting below!</div>
+    </div>
+    <div class="flex gap-2 mt-4">
+      <input id="user-input" type="text" placeholder="Ask Neo AI anything..." class="flex-1 p-3 rounded-lg bg-white text-black focus:outline-none focus:ring-2 focus:ring-teal-400">
+      <button id="send-btn" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatArea = document.getElementById('chat-area');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const clearChatBtn = document.getElementById('clear-chat');
+
+    // Add message with timestamp
+    function addMessage(content, isUser) {
+      const messageDiv = document.createElement('div');
+      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      messageDiv.classList.add('message', 'max-w-md', 'p-3', 'text-sm', isUser ? 'user-message' : 'ai-message', 'self-end');
+      messageDiv.innerHTML = `<span>${content}</span><div class="text-xs text-gray-300 mt-1">${timestamp}</div>`;
+      chatArea.appendChild(messageDiv);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // Mock AI response (replace with your AI API)
+    function getAIResponse(userMessage) {
+      return `Neo AI: ${userMessage} (Plug in your AI API here)`; 
+    }
+
+    // Send message
+    sendBtn.addEventListener('click', () => {
+      const message = userInput.value.trim();
+      if (message) {
+        addMessage(message, true);
+        const aiResponse = getAIResponse(message);
+        setTimeout(() => addMessage(aiResponse, false), 600); // Simulate AI delay
+        userInput.value = '';
+      }
+    });
+
+    // Send on Enter key
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendBtn.click();
+    });
+
+    // Clear chat
+    clearChatBtn.addEventListener('click', () => {
+      chatArea.innerHTML = '<div class="text-center text-sm text-gray-300">Start chatting below!</div>';
+    });
+  </script>
+</body>
+</html>
